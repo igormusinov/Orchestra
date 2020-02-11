@@ -1,0 +1,25 @@
+- hosts: lambda
+  become: true
+  vars:
+    pass_dir: "jupyterhub/passwords"
+    # user: ['user']
+  tasks: 
+  # - name: test
+  #   debug: msg="{{ lookup('file', '{{ pass_dir }}/{{ item }}.password' ) }}"
+  #   loop: "{{ user|list }}"
+
+  - name: Add user
+    user: 
+      name: "{{ item }}"
+      password: "{{ lookup('file', '{{ pass_dir }}/{{ item }}.password_hashed' ) }}"
+    loop: "{{ user|list }}"
+    tags:
+      - change password
+
+  - name: Send passwords
+    copy:
+      src: "{{ pass_dir }}/{{ item }}.password"
+      dest: "/home/{{ item }}/password"
+      mode: 0770
+      owner: "{{ item }}"
+    loop: "{{ user|list }}"

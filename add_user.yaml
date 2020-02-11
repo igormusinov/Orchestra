@@ -1,0 +1,70 @@
+- hosts: all
+  become: true
+  vars:
+    # user: ['user']
+  tasks: 
+  - name: Add user
+    user: 
+      name: "{{ item }}"
+      shell: /bin/bash
+    loop: "{{ user|list }}"
+    tags:
+      - create_user
+
+  - name: Add user to docker group
+    user: 
+      name: "{{ item }}"
+      groups: "{{ item }},docker"
+      append: yes
+    loop: "{{ user|list }}"
+    when: docker == 'yes'
+    tags:
+      - add to docker group
+
+  - name: Set authorized key taken from file
+    authorized_key:
+      user: "{{ item }}"
+      state: present
+      key: "{{ lookup('file', 'ssh/{{ item }}.pub') }}"
+    loop: "{{ user|list }}"
+    tags:
+      - create_user
+      - key
+
+  - name: Create data folder     
+    file:
+      path: "/mnt/{{ item }}"
+      state: directory
+      owner: "{{ item }}"
+      mode: '0755'
+    loop: "{{ user|list }}"
+    tags:
+      - mnt
+  - name: Create data folder     
+    file:
+      path: "/datadrive/{{ item }}"
+      state: directory
+      owner: "{{ item }}"
+      mode: '0755'
+    loop: "{{ user|list }}"
+    tags:
+      - datadrive
+
+  - name: Create symlink to mnt
+    file:
+      src: "/mnt/{{ item }}"
+      dest: "/home/{{ item }}/temporary"
+      owner: "{{ item }}"
+      state: link
+    loop: "{{ user|list }}"
+    tags:
+      - mnt
+  - name: Create symlink to datadrive
+    file:
+      src: "/datadrive/{{ item }}"
+      dest: "/home/{{ item }}/data"
+      owner: "{{ item }}"
+      state: link
+    loop: "{{ user|list }}"
+    tags:
+      - datadrive

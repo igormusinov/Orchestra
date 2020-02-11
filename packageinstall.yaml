@@ -1,0 +1,89 @@
+- hosts: lambda
+  become: true
+  vars:
+    - kube_version: 1.16.3-00
+  tasks:  
+  - name: Install required system packages
+    apt: name={{ item }} state=latest update_cache=yes
+    loop: [ 'apt-transport-https', 'ca-certificates', 'curl', 'software-properties-common', 'python3-pip', 'virtualenv', 'python3-setuptools']
+    tags:
+      - docker
+
+
+  - name: Add Docker GPG apt Key
+    apt_key:
+      url: https://download.docker.com/linux/ubuntu/gpg
+      state: present
+    tags:
+      - docker
+
+  - name: Add kube GPG apt Key
+    apt_key:
+      url: https://packages.cloud.google.com/apt/doc/apt-key.gpg
+      state: present
+    tags:
+      - kube
+
+
+  - name: Add Docker Repository
+    apt_repository:
+      repo: deb https://download.docker.com/linux/ubuntu bionic stable
+      state: present
+    tags:
+      - docker
+  - name: Add Kubernetes Repository
+    apt_repository:
+      repo: deb https://apt.kubernetes.io/ kubernetes-xenial main
+      state: present
+    tags:
+      - kube
+
+
+  - name: Update apt and install docker-ce and kubectl
+    apt: update_cache=yes name={{ item }} state=latest
+    loop: [ 'containerd.io', 'docker-ce', 'docker-ce-cli']
+    tags:
+      - docker
+  - name: Install kubectl
+    apt: update_cache=yes name=kubectl state=latest
+    tags:
+      - kube
+
+
+  - name: Install Docker Module for Python
+    pip:
+      name: docker
+    tags:
+      - docker
+
+
+  - name: Docker daemon config
+    copy:
+      src: configs/daemon.json
+      dest: /etc/docker/daemon.json
+    tags:
+      - docker
+      - docker-config
+  - name: Docker restart
+    service:
+      name: docker
+      state: restarted
+    tags:
+      - docker
+      - docker-config
+
+
+#==========================================
+
+
+  - name: Install required packages
+    apt: name={{ item }} state=latest update_cache=yes
+    loop: [ "make", 'build-essential', 'libssl-dev', "zlib1g-dev", "libbz2-dev", \
+"libreadline-dev", "libsqlite3-dev", "wget",  "curl", "llvm", "libncurses5-dev", "libncursesw5-dev", \
+"xz-utils", "tk-dev", "libffi-dev", "liblzma-dev", "python-openssl", "git", "graphviz", "emacs-nox", "htop"]
+    tags:
+      - packages
+
+
+
+
