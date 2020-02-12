@@ -1,0 +1,3 @@
+npm==3.5.2
+#npm install -g configurable-http-proxy@3.1.1
+configurable-http-proxy==3.1.1
