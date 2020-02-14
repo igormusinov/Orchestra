@@ -1,0 +1,22 @@
+- hosts: lambdagpu, lambdagpu2
+  become: true
+  tasks:     
+  - name: Create az creds dir
+    file:
+      path: "/etc/azcreds"
+      state: directory
+      mode: '0755'
+    tags:
+      - azcred
+
+  - name: Copy az creds files
+    copy:
+      src: "Azure/{{ item }}"
+      dest: "/etc/azcreds/{{ item }}"
+      mode: '0755'
+    loop:
+      - azlogin.sh
+      - afscreds.sh
+      - kubeconfig.users
+    tags:
+      - azcred
