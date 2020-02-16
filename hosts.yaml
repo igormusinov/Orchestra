@@ -1,0 +1,16 @@
+all:
+    children:
+        lambda:
+            children:
+                lambdagpu:
+                    hosts:
+                        "<ip>":
+
+                lambdagpu2:
+                    hosts:
+                        "<ip>":
+
+        aciworker:
+            hosts:
+                "<ip>":
+
