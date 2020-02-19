@@ -1,7 +1,6 @@
 add_user:
-	ansible-playbook add_user.yaml --extra-vars '{"user":["user1","user2"]}' --limit lambdagpu2
-# 	ansible-playbook add_user.yaml --extra-vars '{"user":["user1","user2"]}' --limit aciworker
-# 	ansible-playbook -i '40.124.32.72,' add_user.yaml --extra-vars '{"user":["user1","user2"]}'
+	ansible-playbook add_user.yaml --extra-vars '{"user":["user1","user2"], docker: "yes"}' --limit lambdagpu2
+# 	ansible-playbook add_user.yaml --extra-vars '{"user":["user1","user2"], docker: "yes"}' --limit aciworker --list-hosts
 
 packagesinstall:
 	ansible-playbook packagesinstall.yaml --limit lambdagpu2
@@ -16,7 +15,7 @@ mount:
 
 
 # make_history:
-# 	ansible-playbook -i '40.124.32.72,' add_user.yaml --extra-vars '{"user":["user1","user2"]}'
+# 	ansible-playbook all add_user.yaml --extra-vars '{"user":["user1","user2"]}'
 
 accept_keys:
 	ANSIBLE_HOST_KEY_CHECKING=false ansible-playbook keys_accept.yaml 
