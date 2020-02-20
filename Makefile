@@ -24,7 +24,7 @@ image_docker:
 	ansible -m shell -a "docker pull mrphys/mfsimage:coMagnetAzure" 
 
 list:
-	ansible-playbook joinkube.yaml --limit cern-mc39h.ydf.yandex.net -f 25 --list-hosts
+	ansible-playbook joinkube.yaml --limit <machine> -f 25 --list-hosts
 
 limit:
 	ansible-playbook -l victim  iptables.yaml --tags "docker" --list-hosts
