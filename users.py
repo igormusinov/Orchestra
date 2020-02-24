@@ -10,7 +10,7 @@ from passlib.hash import sha512_crypt
 passwd_folder = Path("jupyterhub/passwords")
 
 
-def get_users(file):
+def get_users(file: str) -> list:
 	user_file: str = file
 	user_list = []
 	with open(user_file, 'r') as f:
@@ -51,9 +51,13 @@ if __name__ == "__main__":
 	parser.add_argument('--file', help='Specify file with users')
 	parser.add_argument('--passwd', help='generate pass', action="store_true")
 	parser.add_argument('--force', help='Force generate pass', action="store_true")
+	parser.add_argument('--user', help="user")
 	args = parser.parse_args()
 
-	user_list = get_users(args.file)
+	if args.file:
+		user_list = get_users(args.file)
+	if args.user:
+		user_list = [str(args.user)]
 	if args.file:
 		generate_list(user_list)
 	if args.passwd:

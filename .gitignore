@@ -5,3 +5,11 @@
 hosts.yaml
 
 ansible.cfg
+
+ssh/
+
+jupyterhub/passwords/
+
+Azure/blobs/
+
+Azure/creds/
